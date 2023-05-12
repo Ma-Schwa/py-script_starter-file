@@ -6,4 +6,7 @@ The index.html file in this repo contains py-script stuff so that you can run py
 Project Link: [https://github.com/Ma-Schwa/py-script_starter-file](https://github.com/Ma-Schwa/py-script_starter-file)
 ## Usage
 
-No installation needed. Just open the index.html file in the browser.
+```console
+git clone https://github.com/Ma-Schwa/py-script_starter-file.git
+```
+Then open the index.html file in the browser.
