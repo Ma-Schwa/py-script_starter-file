@@ -153,6 +153,16 @@ last update: May 12th 2023
         Furthermore it opens a text file and prints the lines to the py-terminal.<br>
         The python filename as well as the txt filename must be specified in the py-config tag. <br>
         py-terminal displays stdout and stderr from your python code</p>
+        <div class="alert alert-warning" role="alert">
+            If local files are loaded and you face an error like 
+            <em>
+                PyScript: Access to local files (using "Paths:" in &lt;py-config&gt;) is not available when directly opening a HTML file
+            </em>
+            make schure that you run a server as described here:
+            <a href="https://github.com/pyscript/pyscript/issues/257#issuecomment-1119595062" target="_blank">
+                https://github.com/pyscript/pyscript/issues/257#issuecomment-1119595062
+            </a>
+        </div>
         <a href="https://docs.pyscript.net/latest/reference/plugins/py-terminal.html" target="_blank">
             https://docs.pyscript.net/latest/reference/plugins/py-terminal.html</a>
         <pre><code class="language-html">
