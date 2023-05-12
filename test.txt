@@ -1,0 +1,3 @@
+content from test.txt file with ÄÖü$%§@ 123!
+line 2
+end test.txt

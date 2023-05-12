@@ -1,0 +1,380 @@
+<html>
+<head>
+    <title>pyscript</title>
+    <meta charset="utf-8">
+    <!--    plotly js-->
+    <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+    <!--    bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!--    code https://highlightjs.org/-->
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <!-- .md markdown file integration -->
+    <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
+    <!--    pyscript-->
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css"/>
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <!--    custom css-->
+    <link rel="stylesheet" href="custom.css"/>
+
+</head>
+
+<body>
+    <div class="container">
+
+        <!--    set and configure general metadata-->
+        <py-config>
+            name = "My App"
+            description = "descr"
+            terminal = false
+            packages = ["matplotlib", "pandas", "plotly", "requests", "pyodide-http"]
+            [[fetch]]
+            files = ["test.txt", "csv.csv", 'plotly.csv',
+            "compute_pi.py", "code_import.py"]
+            [splashscreen]
+            enabled = false
+        </py-config>
+
+        <h1 class="header"><code>py-script</code> starter file</h1>
+        <pre><code>
+By Markus Schwarzhuber
+created: May 10th 2023
+last update: May 12th 2023
+        </code></pre>
+        <a href="https://pyscript.net/" target="_blank">https://pyscript.net/</a>
+        <div class="row">
+            <div class="col">
+                <p><code>PyScript</code> is a framework that allows users to create rich Python applications in the browser
+                    using HTML's interface and the power of Pyodide, WASM, and modern web technologies.
+                    The PyScript framework provides users at every experience level with access to an expressive,
+                    easy-to-learn programming language with countless applications.
+                </p>
+                <p>The big advantage of PyScript is that you can write web applications in Python without the need for a
+                    server. This is achieved by using the Pyodide Python interpreter that is written in WebAssembly,
+                    the lower level language for the web that is supported by modern browsers.
+                </p>
+                <a href="https://pyodide.org/en/stable/" target="_blank">https://pyodide.org/en/stable/</a>
+                <p><code>Pyodide</code> is a port of CPython to WebAssembly/Emscripten.
+                    Pyodide makes it possible to install and run Python packages in the browser with micropip. Any pure Python package with a wheel available on PyPi is supported. Many packages with C extensions have also been ported for use with Pyodide. These include many general-purpose packages such as regex, PyYAML, lxml and scientific Python packages including NumPy, pandas, SciPy, Matplotlib, and scikit-learn.
+                    Pyodide comes with a robust Javascript ⟺ Python foreign function interface so that you can freely mix these two languages in your code with minimal friction. This includes full support for error handling, async/await, and much more.
+                    When used inside a browser, Python has full access to the Web APIs.</p>
+            </div>
+        </div>
+
+        <div id="toc_container">
+            <p class="toc_title">Contents</p>
+            <ul class="toc_list">
+                <li><a href="#toc1">Integrate py-script in your html file</a></li>
+                <li><a href="#toc2">Execute a python function on button click with the py-click attribute</a></li>
+                <li><a href="#toc3">py-repl to evaluate multi-line python code and display output</a></li>
+                <li><a href="#toc4">Load files, use functions and print file content to the py-terminal</a></li>
+                <li><a href="#toc5">Load whole python file and execute it</a></li>
+                <li><a href="#toc6">Use pandas, read csv.csv and display content to div</a></li>
+                <li><a href="#toc7">Javascript-python-interaction</a></li>
+                <li><a href="#toc8">Integrate plotly</a></li>
+                <li><a href="#toc9">Web-scraping</a></li>
+<!--                <li><a href="#toc10"></a></li>-->
+            </ul>
+        </div>
+
+
+
+        <h3 class="count_header" id="toc1">Integrate py-script in your html file, write python code in it using py-script-tags
+            and output something to a specific #id with the display function</h3>
+        <a href="https://docs.pyscript.net/latest/tutorials/writing-to-page.html" target="_blank">
+            How to write content to the page
+        </a>
+        <pre><code class="language-html">
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css"/&gt;
+    &lt;script defer src="https://pyscript.net/latest/pyscript.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;py-script&gt;
+        # comment in python
+        display('Hello, World!', target="target_div")
+    &lt;/py-script&gt;
+    &lt;div id="target_div"&gt;&lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+        </code></pre>
+        <py-script>
+            # comment in python
+            display('Hello, World!', target="target_div")
+        </py-script>
+        <div id="target_div"></div>
+
+        <h3 class="count_header" id="toc2">Execute a python function on button click with the py-click attribute and use the Element API to display
+        the output</h3>
+        <a href="https://docs.pyscript.net/latest/tutorials/py-click.html" target="_blank">
+            Handling click events
+        </a>
+        <pre><code class="language-html">
+&lt;button class="btn btn-warning" py-click="write_time_to_element()"&gt;Click here to run python code&lt;/button&gt;
+&lt;py-script&gt;
+    import datetime
+    def write_time_to_element():
+        Element('time').write(datetime.datetime.now().strftime("%b %d %Y, %H:%M:%S"))
+&lt;/py-script&gt;
+&lt;p id="time"&gt;&lt;/p&gt;
+        </code></pre>
+        <button class="btn btn-warning" py-click="write_time_to_element()">Click here to run python code</button>
+        <!--https://docs.pyscript.net/latest/reference/API/element.html-->
+        <py-script>
+        import datetime
+        def write_time_to_element():
+            Element('time').write(datetime.datetime.now().strftime("%b %d %Y, %H:%M:%S"))
+        </py-script>
+        <p id="time"></p>
+
+        <h3 class="count_header" id="toc3">py-repl to evaluate multi-line python code and display output</h3>
+        <a href="https://docs.pyscript.net/latest/reference/elements/py-repl.html" target="_blank">
+            https://docs.pyscript.net/latest/reference/elements/py-repl.html</a>
+        <p>Click into repl and press shift + enter to run the code</p>
+        <!--    provides a REPL(Read Eval Print Loop) to evaluate multi-line Python and display output-->
+        <py-repl output="replOutput">
+            class Myclass:
+                def __init__(self):
+                    pass
+
+                @classmethod
+                def myfunc(cls, *args, **kwargs):
+                    display(args, kwargs, target="replOutput")
+            Myclass.myfunc(1, "a", b=2, c="c")
+        </py-repl>
+        <div id="replOutput"></div>
+
+        <h3 class="count_header" id="toc4">Load files, use functions and print file content to the py-terminal</h3>
+        <p>This is importing the print_word function from the code_import.py file and runs the function.<br>
+        Furthermore it opens a text file and prints the lines to the py-terminal.<br>
+        The python filename as well as the txt filename must be specified in the py-config tag. <br>
+        py-terminal displays stdout and stderr from your python code</p>
+        <a href="https://docs.pyscript.net/latest/reference/plugins/py-terminal.html" target="_blank">
+            https://docs.pyscript.net/latest/reference/plugins/py-terminal.html</a>
+        <pre><code class="language-html">
+    &lt;py-config&gt;
+        [[fetch]]
+        files = ["test.txt", "code_import.py"]
+    &lt;/py-config&gt;
+        </code></pre>
+
+        <pre><code class="language-python">
+    # code_import.py
+    def print_word(word):
+        print(word, end="\n\n")
+        </code></pre>
+
+        <div class="row">
+        <pre><code class="language-html">
+&lt;py-script&gt;
+    from code_import import print_word
+    print_word("word printed from print_word function")
+
+    with open('test.txt', 'r') as f:
+        print(f.read())
+&lt;/py-script&gt;
+&lt;py-terminal&gt;&lt;/py-terminal&gt;
+&lt;button class="btn btn-warning" py-onClick="clear_terminal()"&gt;clear terminal&lt;/button&gt;
+&lt;py-script&gt;
+import js
+def clear_terminal():
+    js.document.getElementsByClassName("py-terminal")[0].innerHTML = ""
+&lt;/py-script&gt;
+        </code></pre>
+        </div>
+        <py-script>
+        from code_import import print_word
+        print_word("word printed from print_word function")
+
+        with open('test.txt', 'r') as f:
+            print(f.read())
+        </py-script>
+        <py-terminal></py-terminal>
+            <!--https://docs.pyscript.net/latest/reference/API/attr_to_event.html-->
+        <button class="btn btn-warning" py-onClick="clear_terminal()">clear terminal</button>
+        <py-script>
+            import js
+            def clear_terminal():
+                js.document.getElementsByClassName("py-terminal")[0].innerHTML = ""
+        </py-script>
+        <br>
+        <a href="https://docs.pyscript.net/latest/reference/API/attr_to_event.html">
+            Check out py-script events like py.click
+        </a>
+        <p>Note that we use here the js library which allows py-script to access
+            javascript functions.</p>
+        <a href="https://docs.pyscript.net/latest/guides/passing-objects.html">
+            https://docs.pyscript.net/latest/guides/passing-objects.html</a>
+        <p>The other way is using pyodide's create_proxy to allow javascript to call py-script functions.</p>
+        <pre><code class="language-html">
+&lt;button class="btn btn-warning" py-onClick="clear_terminal()"&gt;clear terminal&lt;/button&gt;
+&lt;py-script&gt;
+import js
+def clear_terminal():
+    js.document.getElementsByClassName("py-terminal")[0].innerHTML = ""
+&lt;/py-script&gt;
+        </code></pre>
+
+        <!--
+                <pre><code class="language-shell">
+        pip install -r req.txt
+                </code></pre>
+
+
+            inlcude a .md file
+            <pre><code class="language-html">
+        <div class="d-grid gap-3">
+          &lt;div class="p-2 bg-light border"&gt;Grid item 1&lt;/div&gt;
+          &lt;div class="p-2 bg-light border"&gt;Grid item 2&lt;/div&gt;
+          &lt;div class="p-2 bg-light border"&gt;Grid item 3&lt;/div&gt;
+        </div>
+            </code></pre>
+            <zero-md src="README.md"></zero-md>
+        -->
+        <h3 class="count_header" id="toc5">Load whole python file and execute it</h3>
+        <pre><code class="language-html">
+&lt;py-config&gt;
+    [[fetch]]
+    files = ["compute_py.py"]
+&lt;/py-config&gt;
+        </code></pre>
+
+        <pre><code class="language-python">
+# compute_pi.py
+def compute_pi(n):
+    pi = 2
+    for i in range(1, n):
+        pi *= 4 * i ** 2 / (4 * i ** 2 - 1)
+    return pi
+
+
+pi = compute_pi(1000)
+display(f"π is approximately {pi:.3f}", target="pi_out")
+        </code></pre>
+
+        <pre><code class="language-html">
+&lt;py-script src="compute_pi.py"&gt;&lt;/py-script&gt;
+&lt;p&gt; id="pi_out.py"&lt;/p&gt;
+        </code></pre>
+        <py-script src="compute_pi.py"></py-script>
+        <p id="pi_out"></p>
+        <h3 class="count_header" id="toc6">Use pandas, read csv.csv and display content to div</h3>
+        <p>Don't forget to list the py file and the csv file in the py-config tag.</p>
+        <pre><code class="language-html">
+&lt;py-config&gt;
+    packages = ["pandas"]
+    [[fetch]]
+    files = ["use_pandas.py"]
+&lt;/py-config&gt;
+        </code></pre>
+        <py-script src="use_pandas.py"></py-script>
+        <div id="display_output"></div>
+        <br>
+        <h3 class="count_header" id="toc7">Javascript-python-interaction</h3>
+        <br>
+        <p>We can use the js library to call javascript functions in python and from pyodide create_proxy
+            to use python functions in javascript. <br>
+            Depending on the dropdown selection below different data is loaded and a chart is generated.
+            To do that we use javascript functions in python (e.g. getElementById) and we pass also a python
+            function to javascript.</p>
+        <a href="https://towardsdatascience.com/create-an-interactive-web-app-with-pyscript-and-pandas-3918ad2dada1"
+           target="_blank">
+            https://towardsdatascience.com/create-an-interactive-web-app-with-pyscript-and-pandas-3918ad2dada1
+        </a>
+        <br>
+        <a href="https://docs.pyscript.net/latest/guides/passing-objects.html?highlight=create_proxy"
+           target="_blank">
+            https://docs.pyscript.net/latest/guides/passing-objects.html?highlight=create_proxy</a>
+        <br>
+        <a href="https://jeff.glass/post/pyscript-why-create-proxy/" target="_blank">
+            PyScript - Why Do We Need create_proxy()?
+        </a>
+        <pre><code class="">
+# for more details and full script have a look into the weather.py file
+
+import js
+from pyodide.ffi import create_proxy
+
+def python_function_name(event):
+    "This function is called when a change event occurs."
+    # here we use javascript's getElementById in python
+    choice = js.document.getElementById("select").value
+    js.document.getElementById("selected_condition").innerHTML = choice
+    plot(choice)
+
+# set the proxy
+def setup():
+    # here we pass a python function to an EventListener
+    js_function_name = create_proxy(python_function_name)
+    dropdown_element = js.document.getElementById("select")
+    dropdown_element.addEventListener("change", js_function_name)
+
+setup()
+        </code></pre>
+        <div class="input-group mb-2 mt-4">
+            <span class="input-group-text">Select condition from dropdown:</span>
+            <div class="col">
+                <select class="form-select" id="select">
+                    <option selected value="Tmax">Maximum Temperature</option>
+                    <option value="Tmin">Minimum Temperature</option>
+                    <option value="Sun">Sun</option>
+                    <option value="Rain">Rain</option>
+                </select>
+            </div>
+        </div>
+        <div id="selected_condition"></div>
+        <py-script src="weather.py"></py-script>
+        <div class="text-center pb-3" id="chart0"></div>
+
+        <h3 class="count_header" id="toc8">Integrate plotly</h3>
+        <a href="https://plotly.com/python/" target="_blank">
+            https://plotly.com/python/
+        </a><br>
+        <a href="https://plotly.com/javascript/" target="_blank">
+            https://plotly.com/javascript/
+        </a>
+        <py-script src="plotly.py"></py-script>
+        <pre><code class="language-html">
+&lt;script src='https://cdn.plot.ly/plotly-latest.min.js'&gt;&lt;/script &gt;
+        </code></pre>
+        <pre><code class="language-js">
+function my_js_plot_function(graph, target_id) {
+                        var figure = JSON.parse(graph)
+                        Plotly.newPlot(target_id, figure, {});
+                        }
+        </code> </pre>
+        <pre><code class="language-html">
+&lt;py-script src="plotly.py"&gt;&lt;/py-script&gt;
+        </code></pre>
+        <div id="chart1"></div>
+        <div id="chart2"></div>
+
+        <h3 class="count_header" id="toc9">Web-scraping</h3>
+        <p>To do: format output nicely</p>
+        <p>To do: parse content</p>
+        <py-script src="webscrape.py" output="json_out"></py-script>
+        <a href="https://docs.pyscript.net/latest/tutorials/requests.html" target="_blank">
+            Calling an API using Requests
+        </a>
+        <div id="json_out"></div>
+        <div id="text_out"></div>
+        <br>
+        <!--bootstrap js-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+                crossorigin="anonymous"></script>
+
+        <!--define function to plot plotly charts with javascript-->
+        <script type='text/javascript'>
+                    function my_js_plot_function(graph, target_id) {
+                        var figure = JSON.parse(graph)
+                        Plotly.newPlot(target_id, figure, {});
+                    }
+        </script>
+    </div>
+</body>
+</html>
